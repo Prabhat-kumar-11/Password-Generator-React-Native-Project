@@ -4,9 +4,7 @@ import React from 'react';
 const App = () => {
   return (
     <SafeAreaView>
-      <ScrollView>
-        <Text>hello world</Text>
-      </ScrollView>
+     
     </SafeAreaView>
   );
 };
