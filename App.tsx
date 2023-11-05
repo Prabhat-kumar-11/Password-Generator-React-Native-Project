@@ -32,7 +32,7 @@ const App = () => {
 
   return (
     <SafeAreaView>
-      <Text></Text>
+      <Text>password Generator</Text>
     </SafeAreaView>
   );
 };
