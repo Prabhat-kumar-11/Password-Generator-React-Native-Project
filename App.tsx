@@ -1,4 +1,12 @@
-import {View, Text, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 import React, {useState} from 'react';
 import * as Yup from 'yup';
 import {Formik} from 'formik';
@@ -84,13 +92,32 @@ const App = () => {
               handleSubmit,
               handleReset,
             }) => (
-              <form >
-               <View style={styles.inputWrapper}></View>
-               <View style={styles.inputWrapper}></View>
-               <View style={styles.inputWrapper}></View>
-               <View style={styles.inputWrapper}></View>
-               <View style={styles.inputWrapper}></View>
-              </form>
+              <>
+                <View style={styles.inputWrapper}>
+                  <View style={styles.inputColumn}>
+                    <TextInput
+                      style={styles.inputStyle}
+                      value={values.passwordLength}
+                      onChangeText={handleChange('passwordLength')}
+                      placeholder="Ex. 8"
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.inputWrapper}></View>
+                <View style={styles.inputWrapper}></View>
+                <View style={styles.inputWrapper}></View>
+                <View style={styles.inputWrapper}></View>
+                <View style={styles.formActions}>
+                  <TouchableOpacity>
+                    <Text>Generate password</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <Text>Reset</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
             )}
           </Formik>
         </View>
