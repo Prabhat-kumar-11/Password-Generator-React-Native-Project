@@ -10,18 +10,19 @@ import {
 import React, {useState} from 'react';
 import * as Yup from 'yup';
 import {Formik} from 'formik';
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
 
-//  Form validation  by using Yup
+// Form validation by using Yup
 const PasswordSchema = Yup.object().shape({
   passwordLength: Yup.number()
-    .min(4, 'should be min of 4 characters')
-    .max(16, 'should be max of 16 characters')
+    .min(4, 'should be a minimum of 4 characters')
+    .max(16, 'should be a maximum of 16 characters')
     .required('Length is required'),
 });
 
-const App = () => {
+export default function App() {
   const [password, setPassword] = useState('');
-  const [isPassGenerated, setIsPassGenerateded] = useState(false);
+  const [isPassGenerated, setIsPassGenerated] = useState(false);
   const [lowerCase, setLowerCase] = useState(true);
   const [upperCase, setUpperCase] = useState(false);
   const [numbers, setNumbers] = useState(false);
@@ -41,21 +42,21 @@ const App = () => {
       characterList += lowerCaseChars;
     }
     if (numbers) {
-      characterList += numbers;
+      characterList += digitChars;
     }
     if (symbols) {
-      characterList += symbols;
+      characterList += specialChars;
     }
     const passwordResult = createPassword(characterList, passwordLength);
     setPassword(passwordResult);
-    setIsPassGenerateded(true);
+    setIsPassGenerated(true);
   };
 
   const createPassword = (characters: string, passwordLength: number) => {
     let result = '';
 
     for (let i = 0; i < passwordLength; i++) {
-      const characterIndex = Math.round(Math.random() * characters.length);
+      const characterIndex = Math.floor(Math.random() * characters.length);
       result += characters.charAt(characterIndex);
     }
     return result;
@@ -63,7 +64,7 @@ const App = () => {
 
   const resetPasswordState = () => {
     setPassword('');
-    setIsPassGenerateded(false);
+    setIsPassGenerated(false);
     setLowerCase(true);
     setUpperCase(false);
     setNumbers(false);
@@ -74,11 +75,10 @@ const App = () => {
     <ScrollView keyboardShouldPersistTaps="handled">
       <SafeAreaView style={styles.appContainer}>
         <View style={styles.formContainer}>
-          <Text style={styles.title}>passsword Generator</Text>
+          <Text style={styles.title}>Password Generator</Text>
           <Formik
             initialValues={{passwordLength: ''}}
             validationSchema={PasswordSchema}
-            //something
             onSubmit={values => {
               console.log(values);
               generatePasswordString(+values.passwordLength);
@@ -95,64 +95,116 @@ const App = () => {
               <>
                 <View style={styles.inputWrapper}>
                   <View style={styles.inputColumn}>
-                    <TextInput
-                      style={styles.inputStyle}
-                      value={values.passwordLength}
-                      onChangeText={handleChange('passwordLength')}
-                      placeholder="Ex. 8"
-                      keyboardType="numeric"
-                    />
+                    <Text style={styles.heading}>Password Length</Text>
+                    {touched.passwordLength && errors.passwordLength && (
+                      <Text style={styles.errorText}>
+                        {errors.passwordLength}
+                      </Text>
+                    )}
                   </View>
+                  <TextInput
+                    style={styles.inputStyle}
+                    value={values.passwordLength}
+                    onChangeText={handleChange('passwordLength')}
+                    placeholder="Ex. 8"
+                    keyboardType="numeric"
+                  />
                 </View>
 
-                <View style={styles.inputWrapper}></View>
-                <View style={styles.inputWrapper}></View>
-                <View style={styles.inputWrapper}></View>
-                <View style={styles.inputWrapper}></View>
+                <View style={styles.inputWrapper}>
+                  <Text style={styles.heading}>Include lowercase</Text>
+                  <BouncyCheckbox
+                    disableBuiltInState
+                    isChecked={lowerCase}
+                    onPress={() => setLowerCase(!lowerCase)}
+                    fillColor="#ae48dd" // Custom fill color for checkboxes
+                  />
+                </View>
+
+                <View style={styles.inputWrapper}>
+                  <Text style={styles.heading}>Include uppercase</Text>
+                  <BouncyCheckbox
+                    disableBuiltInState
+                    isChecked={upperCase}
+                    onPress={() => setUpperCase(!upperCase)}
+                    fillColor="#5649e9" // Custom fill color for checkboxes
+                  />
+                </View>
+                <View style={styles.inputWrapper}>
+                  <Text style={styles.heading}>Include Numbers</Text>
+                  <BouncyCheckbox
+                    disableBuiltInState
+                    isChecked={numbers}
+                    onPress={() => setNumbers(!numbers)}
+                    fillColor="#63e6d7" // Custom fill color for checkboxes
+                  />
+                </View>
+                <View style={styles.inputWrapper}>
+                  <Text style={styles.heading}>Include Symbol</Text>
+                  <BouncyCheckbox
+                    disableBuiltInState
+                    isChecked={symbols}
+                    onPress={() => setSymbols(!symbols)}
+                    fillColor="#cddca0" // Custom fill color for checkboxes
+                  />
+                </View>
                 <View style={styles.formActions}>
-                  <TouchableOpacity>
-                    <Text>Generate password</Text>
+                  <TouchableOpacity
+                    disabled={!isValid}
+                    style={styles.primaryBtn}
+                    onPress={handleSubmit}>
+                    <Text style={styles.primaryBtnTxt}>Generate password</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity>
-                    <Text>Reset</Text>
+                  <TouchableOpacity
+                    style={styles.secondaryBtn}
+                    onPress={() => {
+                      handleReset();
+                      resetPasswordState();
+                    }}>
+                    <Text style={styles.secondaryBtnTxt}>Reset</Text>
                   </TouchableOpacity>
                 </View>
               </>
             )}
           </Formik>
         </View>
+        {isPassGenerated ? (
+          <View style={[styles.card, styles.cardElevated]}>
+            <Text style={styles.subTitle}>Result:</Text>
+            <Text style={styles.description}>Long Press to copy</Text>
+            <Text selectable={true} style={styles.generatedPassword}>
+              {password}
+            </Text>
+          </View>
+        ) : null}
       </SafeAreaView>
     </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
+    
+    backgroundColor: '#be5555',
   },
   formContainer: {
-    margin: 8,
-    padding: 8,
+    margin: 16,
+    padding: 16,
+    backgroundColor: '#FFFFFF',
   },
   title: {
-    fontSize: 32,
-    fontweight: '600',
-    marginBottom: 15,
-  },
-  subTitle: {
-    fontSize: 26,
-    fontweight: '600',
-    marginBottom: 2,
-  },
-  description: {
-    color: '#758283',
-    marginBottom: 8,
+    fontSize: 28,
+    fontWeight: '600',
+    marginBottom: 16,
+    color: '#333',
   },
   heading: {
-    fontSize: 15,
+    fontSize: 16,
+    color: '#333',
   },
   inputWrapper: {
-    marginBottom: 15,
+    marginBottom: 20,
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -161,7 +213,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   inputStyle: {
-    padding: 8,
+    padding: 12,
     width: '30%',
     borderWidth: 1,
     borderRadius: 4,
@@ -176,26 +228,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   primaryBtn: {
-    width: 120,
-    padding: 10,
+    width: 140,
+    padding: 14,
     borderRadius: 8,
     marginHorizontal: 8,
-    backgroundColor: '#5DA3FA',
+    backgroundColor: '#2871cb',
+    justifyContent: 'center',
   },
   primaryBtnTxt: {
     color: '#fff',
     textAlign: 'center',
     fontWeight: '700',
+    fontSize: 16,
   },
   secondaryBtn: {
-    width: 120,
-    padding: 10,
+    width: 140,
+    padding: 14,
     borderRadius: 8,
     marginHorizontal: 8,
     backgroundColor: '#CAD5E2',
+    justifyContent: 'center',
   },
   secondaryBtnTxt: {
     textAlign: 'center',
+    fontSize: 16,
   },
   card: {
     padding: 12,
@@ -217,8 +273,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     textAlign: 'center',
     marginBottom: 12,
-    color: '#000',
+    color: '#333',
   },
 });
-
-export default App;
