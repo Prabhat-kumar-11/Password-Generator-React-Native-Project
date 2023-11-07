@@ -170,8 +170,8 @@ export default function App() {
         </View>
         {isPassGenerated ? (
           <View style={[styles.card, styles.cardElevated]}>
-            <Text style={styles.subTitle}>Result:</Text>
-            <Text style={styles.description}>Long Press to copy</Text>
+            <Text>Result:</Text>
+            <Text>Long Press to copy</Text>
             <Text selectable={true} style={styles.generatedPassword}>
               {password}
             </Text>
