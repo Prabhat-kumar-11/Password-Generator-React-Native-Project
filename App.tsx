@@ -72,8 +72,8 @@ export default function App() {
   };
 
   return (
-    <ScrollView keyboardShouldPersistTaps="handled">
-      <SafeAreaView style={styles.appContainer}>
+    <ScrollView style={styles.appContainer} keyboardShouldPersistTaps="handled">
+      <SafeAreaView>
         <View style={styles.formContainer}>
           <Text style={styles.title}>Password Generator</Text>
           <Formik
@@ -185,7 +185,7 @@ export default function App() {
 const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
-    
+
     backgroundColor: '#be5555',
   },
   formContainer: {
